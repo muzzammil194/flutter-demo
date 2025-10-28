@@ -1,3 +1,5 @@
+Backend/node_modules/
+Backend/dist/
 # Miscellaneous
 *.class
 *.log
