@@ -36,7 +36,7 @@ io.on('connection', (socket) => {
   //   });
   // });
 
-   socket.on('registerUser', (userId) => {
+  socket.on('registerUser', (userId) => {
     connectedUsers[userId] = socket.id;
     console.log(`✅ Registered ${userId} -> ${socket.id}`);
   });
@@ -44,15 +44,16 @@ io.on('connection', (socket) => {
   // Example: receive request to send form to specific user
   socket.on('sendFormToUser', (userId) => {
     const targetSocketId = connectedUsers[userId];
-    if (targetSocketId) {
+    if(targetSocketId) {
       io.to(targetSocketId).emit('showForm', {
         fields: [
           { name: "name", type: "text", label: "Full Name" },
-          // { name: "age", type: "number", label: "Age" },
-          // { name: "email", type: "email", label: "Email Address" },
-          // { name: "password", type: "password", label: "Password" },
-          // { name: "country", type: "text", label: "Country" },
-          // { name: "test", type: "text", label: "TEST" },
+          { name: "age", type: "number", label: "Age" },
+          { name: "email", type: "email", label: "Email" },
+          { name: "password", type: "password", label: "Password" },
+          { name: "gender", type: "dropdown", label: "Gender", options: ["Male", "Female", "Other"] },
+          { name: "agree", type: "checkbox", label: "Accept Terms & Conditions" },
+          { name: "dob", type: "date", label: "Date of Birth" }
         ]
       });
       console.log(`📤 Sent form to ${userId}`);
@@ -61,12 +62,12 @@ io.on('connection', (socket) => {
     }
   });
 
- // When client disconnects
+  // When client disconnects
   socket.on('disconnect', () => {
     console.log('🔴 Client disconnected:', socket.id);
     // Optional cleanup
-    for (const key in connectedUsers) {
-      if (connectedUsers[key] === socket.id) {
+    for(const key in connectedUsers) {
+      if(connectedUsers[key] === socket.id) {
         delete connectedUsers[key];
         console.log(`🗑️ Removed ${key} from connected users`);
       }

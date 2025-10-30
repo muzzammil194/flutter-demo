@@ -17,6 +17,7 @@ class SocketDemoApp extends StatefulWidget {
 class _SocketDemoAppState extends State<SocketDemoApp> {
   late IO.Socket socket;
   List<Map<String, dynamic>> formFields = [];
+  Map<String, dynamic> formValues = {}; // store user input
 
   @override
   void initState() {
@@ -48,25 +49,99 @@ class _SocketDemoAppState extends State<SocketDemoApp> {
     });
   }
 
+  Widget buildDynamicField(Map<String, dynamic> field) {
+    final type = field['type'];
+    final label = field['label'];
+
+    switch (type) {
+      case 'text':
+      case 'email':
+      case 'number':
+      case 'password':
+        return TextField(
+          decoration: InputDecoration(labelText: label),
+          obscureText: type == 'password',
+          keyboardType: type == 'number'
+              ? TextInputType.number
+              : type == 'email'
+              ? TextInputType.emailAddress
+              : TextInputType.text,
+          onChanged: (val) => formValues[field['name']] = val,
+        );
+
+      case 'dropdown':
+        return DropdownButtonFormField<dynamic>(
+          decoration: InputDecoration(labelText: label),
+          items: (field['options'] as List)
+              .map(
+                (opt) => DropdownMenuItem<dynamic>(
+                  value: opt,
+                  child: Text(opt.toString()),
+                ),
+              )
+              .toList(),
+          onChanged: (val) => formValues[field['name']] = val,
+        );
+
+      case 'checkbox':
+        return CheckboxListTile(
+          title: Text(label),
+          value: formValues[field['name']] ?? false,
+          onChanged: (val) => setState(() => formValues[field['name']] = val),
+        );
+
+      case 'date':
+        return ListTile(
+          title: Text(label),
+          subtitle: Text(
+            formValues[field['name']]?.toString() ?? 'Select date',
+            style: TextStyle(color: Colors.grey),
+          ),
+          onTap: () async {
+            final date = await showDatePicker(
+              context: context,
+              firstDate: DateTime(1900),
+              lastDate: DateTime(2100),
+              initialDate: DateTime.now(),
+            );
+            if (date != null) {
+              setState(
+                () => formValues[field['name']] = date.toIso8601String().split(
+                  'T',
+                )[0],
+              );
+            }
+          },
+        );
+
+      default:
+        return SizedBox.shrink();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: Text('Dynamic Form Demo')),
+        appBar: AppBar(title: Text('Dynamic Socket Form')),
         body: formFields.isEmpty
             ? Center(child: Text('Waiting for form data...'))
             : Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: ListView(
-                  children: formFields.map((field) {
-                    return TextField(
-                      decoration: InputDecoration(labelText: field['label']),
-                      obscureText: field['type'] == 'password',
-                      keyboardType: field['type'] == 'number'
-                          ? TextInputType.number
-                          : TextInputType.text,
-                    );
-                  }).toList(),
+                  children: [
+                    ...formFields.map(buildDynamicField).toList(),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        print('📝 Form submitted: $formValues');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Form submitted!')),
+                        );
+                      },
+                      child: Text('Submit'),
+                    ),
+                  ],
                 ),
               ),
       ),
