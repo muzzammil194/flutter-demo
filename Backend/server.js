@@ -53,7 +53,7 @@ io.on('connection', (socket) => {
           { name: "password", type: "password", label: "Password" },
           { name: "gender", type: "dropdown", label: "Gender", options: ["Male", "Female", "Other"] },
           { name: "agree", type: "checkbox", label: "Accept Terms & Conditions" },
-          { name: "dob", type: "date", label: "Date of Birth" }
+          // { name: "dob", type: "date", label: "Date of Birth" }
         ]
       });
       console.log(`📤 Sent form to ${userId}`);

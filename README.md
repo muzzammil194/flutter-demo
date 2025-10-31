@@ -65,3 +65,17 @@ Constants (colors, strings) aur themes (dark/light).
 routes/
 
 Saare pages ek jagah define, Navigator.pushNamed ke liye.
+
+
+
+____________________________________ADB COMMANDS BELLOW__________________________________________________________________
+
+adb shell
+run-as com.example.begineer_application
+cd files
+ls
+cp default.realm /sdcard/Download/
+exit
+____________________________________
+this below command use in pc
+adb pull /sdcard/Download/default.realm C:\Users\HP\Downloads\
