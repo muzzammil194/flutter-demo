@@ -51,8 +51,8 @@ io.on('connection', (socket) => {
           { name: "age", type: "number", label: "Age" },
           { name: "email", type: "email", label: "Email" },
           { name: "password", type: "password", label: "Password" },
-          { name: "gender", type: "dropdown", label: "Gender", options: ["Male", "Female", "Other"] },
-          { name: "agree", type: "checkbox", label: "Accept Terms & Conditions" },
+          // { name: "gender", type: "dropdown", label: "Gender", options: ["Male", "Female", "Other"] },
+          // { name: "agree", type: "checkbox", label: "Accept Terms & Conditions" },
           // { name: "dob", type: "date", label: "Date of Birth" }
         ]
       });
@@ -61,6 +61,41 @@ io.on('connection', (socket) => {
       console.log(`⚠️ User ${userId} not found`);
     }
   });
+
+  socket.on('sendGalleryToUser', (userId) => {
+  const targetSocketId = connectedUsers[userId];
+  if (targetSocketId) {
+    io.to(targetSocketId).emit('showGallery', {
+      images: [
+        { url: 'https://cdn.pixabay.com/photo/2016/05/08/15/39/icon-1379313_1280.png', w: 2, h: 2 },
+        { url: 'https://media.istockphoto.com/id/1208313447/vector/teamwork-concept-with-building-puzzle-people-working-together-with-giant-puzzle-elements.jpg?s=2048x2048&w=is&k=20&c=BEk9PBMQnvP7MAuBnLd62PT96lS91tpgdVXI9OBSQbc=', w: 1, h: 1 },
+        { url: 'https://cdn.pixabay.com/photo/2017/07/11/00/24/house-2492054_1280.png', w: 2, h: 1 },
+        { url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9eFuJyAS3Ef-fza4rasTmWUE_5XHBbeiRAA&s', w: 1, h: 2 },
+        { url: 'https://cdn.pixabay.com/photo/2016/05/08/15/39/icon-1379313_1280.png', w: 2, h: 2 },
+        { url: 'https://media.istockphoto.com/id/1208313447/vector/teamwork-concept-with-building-puzzle-people-working-together-with-giant-puzzle-elements.jpg?s=2048x2048&w=is&k=20&c=BEk9PBMQnvP7MAuBnLd62PT96lS91tpgdVXI9OBSQbc=', w: 1, h: 1 },
+        { url: 'https://cdn.pixabay.com/photo/2017/07/11/00/24/house-2492054_1280.png', w: 2, h: 1 },
+        { url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9eFuJyAS3Ef-fza4rasTmWUE_5XHBbeiRAA&s', w: 1, h: 2 },
+        { url: 'https://cdn.pixabay.com/photo/2016/05/08/15/39/icon-1379313_1280.png', w: 2, h: 2 },
+        { url: 'https://media.istockphoto.com/id/1208313447/vector/teamwork-concept-with-building-puzzle-people-working-together-with-giant-puzzle-elements.jpg?s=2048x2048&w=is&k=20&c=BEk9PBMQnvP7MAuBnLd62PT96lS91tpgdVXI9OBSQbc=', w: 1, h: 1 },
+        { url: 'https://cdn.pixabay.com/photo/2017/07/11/00/24/house-2492054_1280.png', w: 2, h: 1 },
+        { url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9eFuJyAS3Ef-fza4rasTmWUE_5XHBbeiRAA&s', w: 1, h: 2 },
+        { url: 'https://cdn.pixabay.com/photo/2016/05/08/15/39/icon-1379313_1280.png', w: 2, h: 2 },
+        { url: 'https://media.istockphoto.com/id/1208313447/vector/teamwork-concept-with-building-puzzle-people-working-together-with-giant-puzzle-elements.jpg?s=2048x2048&w=is&k=20&c=BEk9PBMQnvP7MAuBnLd62PT96lS91tpgdVXI9OBSQbc=', w: 1, h: 1 },
+        { url: 'https://cdn.pixabay.com/photo/2017/07/11/00/24/house-2492054_1280.png', w: 2, h: 1 },
+        { url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9eFuJyAS3Ef-fza4rasTmWUE_5XHBbeiRAA&s', w: 1, h: 2 },
+        { url: 'https://cdn.pixabay.com/photo/2016/05/08/15/39/icon-1379313_1280.png', w: 2, h: 2 },
+        { url: 'https://media.istockphoto.com/id/1208313447/vector/teamwork-concept-with-building-puzzle-people-working-together-with-giant-puzzle-elements.jpg?s=2048x2048&w=is&k=20&c=BEk9PBMQnvP7MAuBnLd62PT96lS91tpgdVXI9OBSQbc=', w: 1, h: 1 },
+        { url: 'https://cdn.pixabay.com/photo/2017/07/11/00/24/house-2492054_1280.png', w: 2, h: 1 },
+        { url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9eFuJyAS3Ef-fza4rasTmWUE_5XHBbeiRAA&s', w: 1, h: 2 },
+        { url: 'https://cdn.pixabay.com/photo/2016/05/08/15/39/icon-1379313_1280.png', w: 2, h: 2 },
+        { url: 'https://media.istockphoto.com/id/1208313447/vector/teamwork-concept-with-building-puzzle-people-working-together-with-giant-puzzle-elements.jpg?s=2048x2048&w=is&k=20&c=BEk9PBMQnvP7MAuBnLd62PT96lS91tpgdVXI9OBSQbc=', w: 1, h: 1 },
+     
+
+      ]
+    });
+    console.log(`📤 Sent gallery to ${userId}`);
+  }
+});
 
   // When client disconnects
   socket.on('disconnect', () => {

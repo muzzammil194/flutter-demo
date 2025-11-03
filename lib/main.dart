@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'services/realm_service.dart';
+import 'screens/gallery_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 late RealmService realmService;
-
-void main() {
+final supabase = Supabase.instance.client;
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   realmService = RealmService();
+  await Supabase.initialize(
+    url: 'https://lkcszrlbphheibhtjdnp.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxrY3N6cmxicGhoZWliaHRqZG5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5MDk0MDQsImV4cCI6MjA3NzQ4NTQwNH0.UQJTikxZYHYv-y5mXMOm4OQl_9cyxd3sbSLMvDLBav4',
+  );
   runApp(const MyApp());
 }
 
@@ -53,7 +60,7 @@ class _SocketDemoAppState extends State<SocketDemoApp> {
 
   void initSocket() {
     socket = IO.io(
-      'http://10.199.19.93:3000/', // your Node.js server
+      'http://10.199.27.16:3000/', // your Node.js server
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()
@@ -72,6 +79,19 @@ class _SocketDemoAppState extends State<SocketDemoApp> {
       setState(() {
         formFields = List<Map<String, dynamic>>.from(data['fields']);
       });
+    });
+
+    socket.on('showGallery', (data) {
+      print("📸 Gallery received: $data");
+      final images = List<Map<String, dynamic>>.from(data['images']);
+
+      if (mounted) {
+        // ✅ ensures widget is still in view
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => DynamicGallery(images: images)),
+        );
+      }
     });
   }
 
@@ -143,10 +163,21 @@ class _SocketDemoAppState extends State<SocketDemoApp> {
     }
   }
 
-  void handleSubmit() {
+  void handleSubmit() async {
     if (formFields.isEmpty) return;
 
     final formId = "dynamic_form_${DateTime.now().millisecondsSinceEpoch}";
+    // Save online to Supabase
+    try {
+      final response = await Supabase.instance.client.from('forms').insert({
+        'form_id': formId,
+        'data': formValues,
+      });
+
+      print("✅ Saved to Supabase: $response");
+    } catch (e) {
+      print("❌ Supabase save failed: $e");
+    }
     realmService.saveFormResponse(formId, formValues);
 
     print("✅ Saved to Realm: $formValues");
